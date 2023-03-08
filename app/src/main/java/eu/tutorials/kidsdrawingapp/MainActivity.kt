@@ -2,6 +2,7 @@ package eu.tutorials.kidsdrawingapp
 
 import android.Manifest
 import android.app.Dialog
+import android.media.Image
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageButton
@@ -18,6 +19,7 @@ import androidx.core.view.get
 class MainActivity : AppCompatActivity() {
 
     private var drawingView : DrawingView? = null
+
     private var mImageButtonCurrentPaint: ImageButton? =
         null // A variable for current color is picked from color pallet.
 
@@ -26,6 +28,13 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         drawingView = findViewById(R.id.drawing_view)
         drawingView?.setSizeForBrush(20.toFloat())
+
+        val linerLayoutPaintColor = findViewById<LinearLayout>(R.id.ll_paint_colors)
+
+        mImageButtonCurrentPaint = linerLayoutPaintColor[1] as ImageButton
+        mImageButtonCurrentPaint!!.setImageDrawable(
+            ContextCompat.getDrawable(this, R.drawable.pallet_pressed)
+        )
 
         val ib_brush : ImageButton = findViewById(R.id.ib_brush)
         ib_brush.setOnClickListener {
