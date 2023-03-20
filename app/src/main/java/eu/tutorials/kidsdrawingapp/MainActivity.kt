@@ -106,6 +106,7 @@ class MainActivity : AppCompatActivity() {
         ibSave.setOnClickListener{
             //check if permission is allowed
             if (isReadStorageAllowed()){
+                showProgressDialog()
                 //launch a coroutine block
                 lifecycleScope.launch{
                     //reference the frame layout
@@ -306,6 +307,7 @@ class MainActivity : AppCompatActivity() {
                     result = f.absolutePath // The file absolute path is return as a result.
                     //We switch from io to ui thread to show a toast
                     runOnUiThread {
+                        cancelProgressDialog()
                         if (!result.isEmpty()) {
                             Toast.makeText(
                                 this@MainActivity,
@@ -328,4 +330,20 @@ class MainActivity : AppCompatActivity() {
         }
         return result
     }
+
+    private fun showProgressDialog() {
+        customProgressDialog = Dialog(this@MainActivity)
+
+        customProgressDialog?.setContentView(R.layout.dialog_custom_progress)
+
+        customProgressDialog?.show()
+    }
+
+    private fun cancelProgressDialog() {
+        if(customProgressDialog != null) {
+            customProgressDialog?.dismiss()
+            customProgressDialog = null
+        }
+    }
+
 }
