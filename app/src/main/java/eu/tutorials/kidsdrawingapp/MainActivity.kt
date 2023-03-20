@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
+import android.media.MediaScannerConnection
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
@@ -175,14 +176,7 @@ class MainActivity : AppCompatActivity() {
      * We are calling this method to check the permission status
      */
     private fun isReadStorageAllowed(): Boolean {
-        //Getting the permission status
-        // Here the checkSelfPermission is
-        /**
-         * Determine whether <em>you</em> have been granted a particular permission.
-         *
-         * @param permission The name of the permission being checked.
-         *
-         */
+
         val result = ContextCompat.checkSelfPermission(
             this, Manifest.permission.READ_EXTERNAL_STORAGE
         )
@@ -308,12 +302,13 @@ class MainActivity : AppCompatActivity() {
                     //We switch from io to ui thread to show a toast
                     runOnUiThread {
                         cancelProgressDialog()
-                        if (!result.isEmpty()) {
+                        if (result.isNotEmpty()) {
                             Toast.makeText(
                                 this@MainActivity,
                                 "File saved successfully :$result",
                                 Toast.LENGTH_SHORT
                             ).show()
+                            shareImage(result)
                         } else {
                             Toast.makeText(
                                 this@MainActivity,
@@ -344,6 +339,20 @@ class MainActivity : AppCompatActivity() {
             customProgressDialog?.dismiss()
             customProgressDialog = null
         }
+    }
+
+    private fun shareImage(result : String) {
+
+        MediaScannerConnection.scanFile(this, arrayOf(result) , null) {
+            path, uri ->
+            val shareIntent = Intent()
+            shareIntent.action = Intent.ACTION_SEND
+            shareIntent.putExtra(Intent.EXTRA_STREAM, uri)
+            shareIntent.type = "image/png"
+            startActivity(Intent.createChooser(shareIntent, "Share"))
+
+        }
+
     }
 
 }
